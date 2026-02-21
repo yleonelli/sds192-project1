@@ -1,0 +1,12 @@
+---
+title: "Proposal for Project 1"
+format: html
+editor: visual
+---
+
+- Which dataset will I use?
+- What question am I trying to answer with this project?
+- Which variables do I want to explore?
+
+I'll be using the Emergency Department Volume and Capacity dataset, which includes measures that represent emergency department (ED) burden such as the ratio of ED encounters (visits) to treatment stations along with breakdowns by health-related conditions like asthma, cardiac, mental health, and substance abuse. With this project, I’m aiming to answer, “How does the relative burden on emergency departments vary across different health conditions or over time?” I plan to explore variables such as the number of ED encounters for specific conditions, the number of available treatment stations, and the calculated burden ratios to see patterns or differences in resource strain across conditions. This could help identify which conditions are associated with higher ED burden and potentially discuss why that might be the case.
+
