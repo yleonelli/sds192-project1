@@ -1,0 +1,82 @@
+---
+title: "Project 1"
+format: html
+editor: visual
+---
+
+# Importing the CSV
+
+```{r}
+library(tidyverse)
+
+emergency_dept <- read.csv("emergency-department-volume-and-capacity-2021-2023 (1).csv")
+
+ed_clean <- emergency_dept |>
+  select(year, CountyName, Category, Tot_ED_NmbVsts, EDStations, Visits_Per_Station) |>
+  filter(!is.na(Visits_Per_Station),
+         !is.na(EDStations),
+         !is.na(Tot_ED_NmbVsts),
+         Category != "All ED Visits")
+
+```
+
+# Distribution of Emergency Department Burden
+
+```{r}
+ggplot(ed_clean, aes(x = Visits_Per_Station)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "white") +
+  labs(title = "Distribution of Emergency Department Burden",
+       x = "Visits per Station",
+       y = "Number of Observations") +
+  theme_minimal()
+```
+This histogram shows that the distribution of visits per station is strongly right-skewed, with most observations concentrated at lower values and a long tail extending toward higher levels of burden. This indicates that most emergency departments operate within relatively moderate patient loads relative to their capacity. However, the presence of extreme values suggests that some hospitals experience substantially higher strain on their emergency departments. These outliers may represent locations with unusually high demand or limited treatment capacity.
+
+# Emergency Department Burden by Health Condition
+
+```{r}
+ggplot(ed_clean, aes(x = Category,
+                     y = Visits_Per_Station)) +
+  geom_boxplot(fill = "red") +
+  coord_flip() +
+  labs(title = "Emergency Department Burden by Health Condition",
+       x = "Health Condition Category",
+       y = "Visits per Station") +
+  theme_minimal()
+```
+This boxplot compares the distribution of visits per station across different health condition categories. Several conditions, such as hypertension, mental health, diabetes, and substance abuse, show higher median values and larger ranges, suggesting that these categories contribute more heavily to emergency department strain. In contrast, conditions such as stroke, cardiac issues, and sepsis appear to have lower median burden levels. The large number of outliers across many categories indicates substantial variation in how different hospitals experience demand for these health conditions. Overall, this plot suggests that certain health conditions are associated with consistently higher levels of emergency department burden.
+
+# Emergency Burden over Time
+
+```{r}
+ed_year <- ed_clean |>
+  group_by(year) |>
+  summarize(avg_burden = mean(Visits_Per_Station))
+
+ggplot(ed_year, aes(x = year, y = avg_burden)) +
+  geom_line(color = "purple") +
+  geom_point(size = 2) +
+  labs(title = "Average Emergency Department Burden Over Time",
+       x = "Year",
+       y = "Average Visits per Station") +
+  theme_minimal()
+```
+This line plot shows that the average number of visits per station remained relatively stable between 2021 and 2023, with only small fluctuations across the three years. There is a slight decrease from 2021 to 2022, followed by a small increase in 2023, looking at the scale of the y-axis. Because the differences are minimal, the data suggest that overall emergency department burden remained fairly consistent during this time period. This indicates that while individual hospitals may experience variation, the system-wide average level of strain did not change dramatically over these years.
+
+# Visits vs. Capacity
+
+```{r}
+ggplot(ed_clean, aes(x = EDStations, y = Tot_ED_NmbVsts)) +
+  geom_point(alpha = 0.4) +
+  labs(title = "Emergency Department Visits vs Treatment Capacity",
+       x = "Number of Treatment Stations",
+       y = "Total ED Visits") +
+  theme_minimal()
+```
+The scatterplot shows a clear positive relationship between the number of treatment stations and the total number of emergency department visits. Hospitals with more treatment stations tend to handle larger patient volumes, which suggests that larger facilities are designed to accommodate greater demand. However, there is still noticeable variation among hospitals with similar numbers of stations, indicating that capacity alone does not fully determine visit volume. This variation may reflect differences in population size, regional healthcare access, or hospital specialization.
+
+
+# Limitations/Pitfalls of the Dataset and Analyses
+
+Several limitations should be considered when interpreting these results. First, the dataset aggregates emergency department visits by health condition category, which, in my opinion, may obscure important differences between individual hospitals or patient populations. Additionally, the classification of visits into specific health conditions may vary across hospitals, introducing potential inconsistencies in how conditions are recorded. The dataset also represents only a limited time period (2021–2023), which restricts the ability to identify longer-term trends in emergency department burden, such as emergency department burden surges during the peak of the pandemic in 2020. Furthermore, visits per station captures only one aspect of hospital strain and does not account for factors such as staffing levels, patient severity, or wait times, which may also influence how overwhelmed an emergency department becomes.
+
